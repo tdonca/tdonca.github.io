@@ -103,7 +103,7 @@ With the WebSocket connection, the Hololens is connected to the ROS network and 
 
 ![ros-scripts](/assets/hololens/PubSub.png){:class="img-responsive" height="300" width="551" style=" display: block; margin: auto; "}
 
-as well as some standard ROS message types. It is very easy to create new messages and accompanying publishers and subscribers. Just follow the directions on the ROS-sharp wiki to [create custom messages][12].
+as well as some standard ROS message types. It is very easy to create new messages and their accompanying publishers and subscribers. Just follow the directions on the ROS-sharp wiki to [create custom messages][12].
 
 
 [1]: https://www.microsoft.com/en-us/hololens
