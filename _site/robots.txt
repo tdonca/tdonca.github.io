@@ -5,3 +5,5 @@ User-agent: *
 Disallow: /.bundle/
 Disallow: /.gitignore
 Allow: /
+
+sitemap:https://www.tudordonca.com/sitemap.xml
