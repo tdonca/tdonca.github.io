@@ -1,0 +1,79 @@
+---
+layout: post
+title: Robot Control System Design for ARIAC
+date: 2018-09-07 15:46
+comments: true
+external-url:
+categories: Robotics
+redirect_from: "/ariac/"
+---
+
+> I recently participated in the [Agile Robotics for Industrial Automation Competition][1] held by the [National Institute of Standards and Technology][2]. After spending the last several months developing a working control system for the provided environment, I will now discuss in more detail the design of the final system, as well as possible future improvements. 
+
+<br/>	
+The software, which is available [here][3], is written in C++, using the [ROS package format][4] and the [CMake][5] build system. ROS provides communication between modular processes called nodes. The packages each implement separate nodes for world representation, robot controllers, and collision object detection. The control system uses the [MoveIt Motion Planning Framework][6] for calculating collision-free motion trajectories for the robot to execute within its environment. 
+
+![ariac-environment](/assets/ariac/ARIAC-Environment.png){:class="img-responsive" height="300" width="520" style=" display: block; margin: auto; "}
+	
+The ARIA Competition focused on order fulfillment in a factory setting - picking and placing parts into shipment containers for delivery. Given a [high-fidelity simulation][7] environment of the shipment area and an industrial robot, the [KUKA IIWA14 Robot][8], I was tasked with developing a system that could autonomously detect order parts in the environment, move the robot to correctly place them into a shipment box based on received order specifications, and submit the parts for processing. The simulation provides a [realistic interface][9] for the IIWA14 robot where I had access to joint motor commands. Using the MoveIt framework, I was able to create smooth motion executions to perform the order fulfillment task.
+<br/>
+<br/>
+
+### World Representation
+
+The two main entities to track in the environment are the parts and the robot. As the robot performs actions, grabbing and moving parts, filling shipment boxes, and fulfilling orders, the world representation must keep track of object relationships so that the robot has a valid perception of the environment. Camera sensors provide the perception input, and this allows the system to detect and track the various parts. Certain abstractions help keep track of the robot and part relationships. All parts belong in a "container," whether they are the bins, the shipment box, or the robot's gripper. As the robot grabs and moves parts around, it modifies the parts and their containers to maintain a valid representation of the environment. 
+	
+![world-state](/assets/ariac/WorldStateDiagram.png){:class="img-responsive" height="200" width="705" style=" display: block; margin: auto; "}
+
+The [world_state][3] package implements the world representation. This is an abstraction to help the robot reason about its environment, so the control system must update the world representation when any actions are taken that have an effect on the world. A client interface provides a simple and clean way to communicate this, abstracting the details of ROS communication and implementation, focusing just on higher level intentions.
+<br/>
+<br/>
+
+
+### Robot Control System
+
+The control system takes the available low-level interface of robot motor commands, and coordinates them into a higher level action controller. The main goal of fulfilling a shipment order can be broken down into individual tasks (move a part to the box). These tasks can be further broken down into actions (grab this part, move to the box, etc...). The control system takes these action commands and converts them into physical robot motions to achieve the desired outcome. 
+
+![control-system](/assets/ariac/ControlSystemDiagram.png){:class="img-responsive" height="300" width="391" style=" display: block; margin: auto; "}
+	
+The system was designed with modularity and extensibility in mind. The ActionManager class receives action commands, interprets them into more specific robot motions, and passes them to the ControllerServer for execution. The ControllerServer class then receives these requests and must determine which robot controller to send them to. The abstraction between The ControllerServer and the specific robot controller allows easy interchangeability for various types of robots. This way, the ActionManager does not need to worry about how the robot will actually execute its commands, or even what specific type of robot is in use.
+
+In this case, the simulation uses the [KUKA IIWA14 Robot][11], and the IIWA14Controller class implements the specific executions necessary to carry out the motion requests generated in the ActionManager. 
+<br/>
+<br/>
+
+### Collision Avoidance
+
+The robot motions are implemented using the MoveIt motion planning framework. In order to calculate feasible motions in the environment, the system needs a representation of all possible collision objects. 
+
+![collision-objects](/assets/ariac/ARIAC-Collision-Objects.png){:class="img-responsive" height="300" width="417" style=" display: block; margin: auto; "}
+
+MoveIt keeps track of collision objects in its [planning scene][12], and everything in the environment (bins, shelves, conveyor belt, etc...) is saved in the planning scene using the predefined object dimensions and [transforms][15]. The [load_scene][3] package computes the world transforms of all collision objects and sends them to the MoveIt planning scene. Then, the motion planning algorithms can detect environment objects and compute trajectories around them.
+<br/>
+<br/>
+
+### Improvements	
+
+For more complicated tasks - emergency orders, long term reasoning, and action verification - simple action planning is not enough. AI Planning languages such as [Planning Domain Definition Language][13] can be used to create better plans, given a thorough representation of the environment. Instead of a custom WorldState class, a formalized ontology of the working environment and the possible relationships, as discussed in [Kootbally et al. 2017][14], along with a PDDL problem definition and planner can provide a robust method for planning complex goals, verifying task successes, and replanning in case of failures. 
+
+<br/>
+
+
+
+
+[1]: https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition
+[2]: https://www.nist.gov/
+[3]: https://github.com/tdonca/ariac-2018-controls
+[4]: http://wiki.ros.org/Packages
+[5]: https://cmake.org/
+[6]: https://moveit.ros.org/
+[7]: http://gazebosim.org/
+[8]: https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/lbr-iiwa
+[9]: https://github.com/IFL-CAMP/iiwa_stack
+[11]: https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/lbr-iiwa
+[12]: http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/planning_scene_ros_api/planning_scene_ros_api_tutorial.html
+[13]: https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume20/fox03a-html/node2.html
+[14]: https://www.nist.gov/publications/overview-ontology-based-approach-kit-building-applications
+[15]: http://wiki.ros.org/tf2
+
+

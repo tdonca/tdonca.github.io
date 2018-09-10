@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="theme-color" content="hsl(35, 36%, 95%)">
+  <title>ROS Communication with Microsoft HoloLens</title>
+
+  
+  <meta name="description" content="
+  
+    
+      
+        ROS Communication with Microsoft HoloLens
+        8 Sep 2018
+        
+          
+        
+      
+    
+    
+      
+      
+  ..." />
+
+  
+  <meta name="keywords" content="" />
+
+  <link rel="canonical" href="http://localhost:4000/blog/2018/09/08/ros-hololens/">
+  <link rel="alternate" type="application/rss+xml" title="Tudor Donca" href="http://localhost:4000/feed.xml" />
+  <span itemprop='author'><meta name="author" content="Tudor Donca"><span itemprop='author'></span>
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="stylesheet" href="//brick.a.ssl.fastly.net/PT+Serif:400,400i,700,700i:f/Source+Code+Pro:400,600:f">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+      },
+
+      TeX: {
+        equationNumbers: { autoNumber: "AMS" }
+      },
+
+      CommonHTML: {
+        scale: 90
+      }
+    };
+  </script>
+  <script type="text/javascript" async
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+
+  <body>
+    <div class="post">
+  <div class="container main">
+    <div class="row">
+      <header>
+        <center><span itemprop="name"><h1>ROS Communication with Microsoft HoloLens</h1></span></center>
+        <center><p>8 Sep 2018</p></center>
+        <center><span class="small-ornament"><svg viewBox="0 0 290 320">
+          <path d="M280.2656 245.3906 Q280.2656 263.25 261.8438 271.9688 Q247.9219 278.7188 227.8125 278.7188 Q235.2656 269.8594 235.2656 256.5 Q235.2656 231.8906 214.4531 217.125 Q196.0312 204.0469 170.2969 204.0469 Q143.5781 204.0469 108.8438 221.0625 L118.9688 231.4688 Q154.4062 267.8906 168.3281 267.8906 Q181.125 267.8906 181.125 255.9375 Q181.125 248.3438 173.5312 243.5625 Q167.0625 239.3438 159.0469 239.3438 Q154.6875 239.3438 148.6406 241.4531 Q158.625 220.0781 173.9531 220.0781 Q184.5 220.0781 191.8828 228.0938 Q199.2656 236.1094 199.2656 246.6562 Q199.2656 265.5 184.3594 277.875 Q170.2969 289.4062 151.0312 289.4062 Q118.6875 289.4062 81.4219 251.0156 L72.1406 241.4531 Q53.5781 249.4688 39.375 249.4688 Q26.4375 249.4688 17.1562 240.9609 Q7.875 232.4531 7.875 219.5156 Q7.875 203.9062 19.125 193.9219 Q29.9531 184.5 45.8438 184.5 Q70.0312 184.5 98.2969 211.6406 Q111.5156 202.2188 127.5469 185.4844 L134.5781 178.1719 Q174.5156 136.6875 204.8906 136.6875 Q231.4688 136.6875 231.4688 155.25 Q231.4688 173.5312 204.3281 177.3281 Q206.4375 172.8281 206.4375 170.1562 Q206.4375 159.3281 193.3594 159.3281 Q175.2188 159.3281 144.2812 189 L137.1094 195.8906 Q165.2344 185.7656 191.25 185.7656 Q221.7656 185.7656 248.3438 200.1094 Q280.2656 217.2656 280.2656 245.3906 ZM61.1719 230.4844 Q44.5781 215.2969 37.2656 215.2969 Q27.9844 215.2969 27.9844 223.4531 Q27.9844 234.4219 42.75 234.4219 Q51.1875 234.4219 61.1719 230.4844z"/>
+        </svg></span></center>
+      </header>
+    </div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-8 offset-md-1">
+        <article lang="en">
+          
+          <blockquote>
+  <p>Augmented Reality interfaces provide intuitive and efficient human-robot interaction without the costly time delay of testing, stopping, and programming separately. <a href="https://www.microsoft.com/en-us/hololens">Microsoft HoloLens</a> is one such useful AR device, and with it, a whole range of interactive communication is possible.</p>
+</blockquote>
+
+<p><br />
+In order to integrate the HoloLens into robotics projects, a robust communication system is necessary. Since many robotics projects use the ROS framework, incorporating the ROS communication format directly on the HoloLens would be ideal. The <a href="https://github.com/siemens/ros-sharp">ROS-sharp</a> library developed by Dr. Martin Bischoff uses <a href="https://en.wikipedia.org/wiki/JSON">JSON</a> format communication to emulate ROS communication. The <a href="http://wiki.ros.org/rosbridge_suite">rosbridge</a> package provides the conversion between JSON and ROS messages, and ROS-sharp connects to a ROS node running a rosbridge server using <a href="https://en.wikipedia.org/wiki/WebSocket">WebSockets</a>.</p>
+
+<p>Setup involves starting the WebSocket server on the ROS side and creating a WebSocket client on the HoloLens side.</p>
+
+<p><br /></p>
+<h3 id="setting-up-the-ros-server">Setting up the ROS server</h3>
+
+<p>Overview of the necessary steps:<br />
+        1. Install the rosbridge_suite package<br />
+        2. Launch the WebSocket server<br />
+        3. Determine the server IP address<br /></p>
+
+<p>The rosbridge_suite package provides a convenient interface for creating ROS messages from JSON. Non-ROS programs such as the HoloLens application can connect to the rosbridge server and use JSON commands to create ROS functionality. This way, HoloLens projects can seamlessly communicate with any ROS node.</p>
+
+<h5 id="install-rosbridge_suite">Install rosbridge_suite</h5>
+<p>Install the <a href="http://wiki.ros.org/rosbridge_suite/Tutorials/RunningRosbridge">rosbridge_suite</a> package by following the site instructions. This just uses apt-get to install the package into your currently installed ROS distribution.</p>
+
+<h5 id="launch-the-websocket-server">Launch the WebSocket server</h5>
+<p>After sourcing your ~/.bashrc file, start the rosbridge node that creates a WebSocket server using the command <code class="highlighter-rouge">roslaunch rosbridge_server rosbridge_websocket.launch</code><br />
+<br />
+<img src="/assets/hololens/RosBridgeServer.png" alt="server-running" class="img-responsive" height="200" width="425" style=" display: block; margin: auto; " />
+<br /></p>
+
+<h5 id="determine-the-server-ip-address">Determine the server IP address</h5>
+<p>Now that the server is running, check the server IP address using ifconfig. This will be used later to configure the HoloLens application so that it can find the WebSocket server.</p>
+
+<p><br /></p>
+<h3 id="setting-up-the-hololens-project">Setting up the HoloLens project</h3>
+
+<p>Overview of the necessary steps:<br />
+        1. Install Unity2017<br />
+        2. Download and open the ROS-sharp Unity package<br />
+        3. Modify the project configuration settings<br />
+        4. Import and configure the HoloLens toolkit<br />
+        5. Create a ROS communication link<br /></p>
+
+<p>Hololens projects are most conveniently created through Unity. The <a href="https://docs.unity3d.com/2017.3/Documentation/Manual/UnityManual.html">Unity Manual</a> provides a good overview of Unity project architecture and how objects and scripts are used to create functionality. The ROS-sharp package provides a deafult Unity project that has the libraries necessary for ROS communication over WebSocket. Once configured properly, this project will allow seamless ROS communication for publishing and subscribing to topics.</p>
+
+<h5 id="install-unity2017">Install <a href="https://store.unity.com/download">Unity2017</a></h5>
+<p>The 2017 version is currently required (September 2018) for the HoloLens development toolkit, which provides many convenient scripts. Look for it in the Older Versions section.</p>
+
+<h5 id="download-and-open-ros-sharp-unity-package">Download and open ROS-sharp Unity package</h5>
+<p>The HoloLens runs on the Universal Windows Platform, so the ROS-sharp library version specific to UWP is necessary. This has been generously provided by <a href="https://www.linkedin.com/in/david-whitney-aa288011b/">David Whitney</a>. Find it <a href="https://github.com/dwhit/ros-sharp">here</a>, and download the repository to the Unity workspace. Open the project using the Unity interface:</p>
+
+<p><br />
+<img src="/assets/hololens/OpenProject.png" alt="open-project" class="img-responsive" height="300" width="514" style=" display: block; margin: auto; " /></p>
+
+<p>This project provides the ROS-sharp library preloaded and ready to use.</p>
+
+<h5 id="modify-the-project-configuration-settings">Modify the project configuration settings</h5>
+<p>You might notice some build errors in Unity, and this is because the ROS-sharp library uses the .NET Framework 4.6, which is not activated by default in Unity 2017.
+In <code class="highlighter-rouge">Edit &gt; Project Settings &gt; Player &gt; UWP Settings</code> modify the scripting and API settings to use .NET 4.6:</p>
+
+<p><br />
+<img src="/assets/hololens/ConfigSettings.png" alt="config-settings" class="img-responsive" height="400" width="278" style=" display: block; margin: auto; " />
+<br /></p>
+
+<h5 id="import-and-configure-the-hololens-toolkit">Import and Configure the HoloLens toolkit</h5>
+<p>The <a href="https://github.com/Microsoft/MixedRealityToolkit-Unity/blob/master/GettingStarted.md">Microsoft Mixed Reality Toolkit</a> provides a collection of scripts and components to make Unity development for the HoloLens as easy as possible. Follow the installation instructions in the link, making sure to download the <a href="https://github.com/Microsoft/MixedRealityToolkit-Unity/releases">2017 release</a> to match up with Unity2017. Import the toolkit as a custom package, and enable the project and scene configuration settings as described in the link’s instructions.</p>
+
+<h5 id="create-a-ros-communication-link">Create a ROS communication link</h5>
+<p>The HoloLens has some settings that controls what “capabilities” the application is allowed to have. In this case, enable the networking capabilities in <code class="highlighter-rouge">Edit &gt; Project Settings &gt; Player &gt; Publishing Settings</code></p>
+
+<p><img src="/assets/hololens/NetworkingCapabilities.png" alt="net-capabilities" class="img-responsive" height="400" width="224" style=" display: block; margin: auto; " /></p>
+
+<p>Now that the project is all configured, the last thing to do is to create a WebSocket client to connect to the rosbridge server. Create a RosConnector component, and make sure is uses the WebSocketUWP Protocol. Input the WebSocket server IP address determined earlier during the ROS setup, with the default port of 9090.</p>
+
+<p><img src="/assets/hololens/RosConnector.png" alt="ros-connector" class="img-responsive" height="200" width="557" style=" display: block; margin: auto; " /></p>
+
+<p>Everything is ready! After building and deploying the application using Visual Studio, you will see the HoloLens successfully connect to the ROS WebSocket server.</p>
+
+<p><img src="/assets/hololens/Build.png" alt="unity-build" class="img-responsive" height="300" width="502" style=" display: block; margin: auto; " /> <br />
+<img src="/assets/hololens/HololensConnect.png" alt="holo-connect-vs" class="img-responsive" height="403" width="502" style=" display: block; margin: auto; " /> <br />
+<img src="/assets/hololens/HololensConnected.png" alt="holo-connected" class="img-responsive" height="232" width="502" style=" display: block; margin: auto; " /></p>
+
+<p><br /></p>
+<h3 id="extending-capabilities">Extending Capabilities</h3>
+
+<p>With the WebSocket connection, the Hololens is connected to the ROS network and capable of publishing and subscribing to topics just like a regular node. The ROS-sharp project already provides some very useful publishers and subscribers as scripts:</p>
+
+<p><img src="/assets/hololens/PubSub.png" alt="ros-scripts" class="img-responsive" height="300" width="551" style=" display: block; margin: auto; " /></p>
+
+<p>as well as some standard ROS message types. It is very easy to create new messages and accompanying publishers and subscribers. Just follow the directions on the ROS-sharp wiki to <a href="https://github.com/siemens/ros-sharp/wiki/Dev_NewMessageTypes">create custom messages</a>.</p>
+
+
+        </article>
+	     </div>
+     </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row biography">
+      <div class="col-sm-4">
+        <h2>who am i</h2>
+        <p>I am a Computer Science and Engineering student at <a href='https://samueli.ucla.edu/'>UCLA</a>, and a Robotics Research Assistant at <a href='http://vcla.stat.ucla.edu/'>VCLA</a>. Here you can find my <a href='/assets/resume.pdf'>Résumé</a>.</p>
+      </div>
+      <div class="col-sm-4">
+        <h2>what is this</h2>
+        <p>This is a collection of writeups detailing my studies in the fields of robotics, and AI.</p>
+      </div>
+      <div class="col-sm-4">
+        <h2>where am i</h2>
+          
+          
+          <div>
+            <a href="https://github.com/tdonca">
+              <span class="username">github//tdonca</span>
+            </a>
+          </div>
+          
+          
+          
+          <div>
+            <a href="https://id.linkedin.com/in/tgdonca">
+              <span class="username">linkedin//tgdonca</span>
+            </a>
+          </div>
+          
+          
+          <div>
+            <a href="https://www.facebook.com/tudor.donca.3">
+              <span class="username">facebook//tudor.donca.3</span>
+            </a>
+          </div>
+          
+      </div>
+    </div>
+    
+    <div class="row copyright">
+      <center>© 2018 by Tudor Donca.<br>Content available under <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>Creative Commons (BY-NC-SA)</a> unless otherwise noted.<br>This site is hosted at <a href='https://pages.github.com/'>Github Pages</a> and created with <a href='http://jekyllrb.com/'>Jekyll</a>.</center>
+    </div>
+    
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="theme-color" content="hsl(35, 36%, 95%)">
+  <title>Robot Control System Design for ARIAC</title>
+
+  
+  <meta name="description" content="
+  
+    
+      
+        Robot Control System Design for ARIAC
+        7 Sep 2018
+        
+          
+        
+      
+    
+    
+      
+      
+      ..." />
+
+  
+  <meta name="keywords" content="" />
+
+  <link rel="canonical" href="http://localhost:4000/blog/2018/09/07/ariac/">
+  <link rel="alternate" type="application/rss+xml" title="Tudor Donca" href="http://localhost:4000/feed.xml" />
+  <span itemprop='author'><meta name="author" content="Tudor Donca"><span itemprop='author'></span>
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="stylesheet" href="//brick.a.ssl.fastly.net/PT+Serif:400,400i,700,700i:f/Source+Code+Pro:400,600:f">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <script type="text/javascript">
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+      },
+
+      TeX: {
+        equationNumbers: { autoNumber: "AMS" }
+      },
+
+      CommonHTML: {
+        scale: 90
+      }
+    };
+  </script>
+  <script type="text/javascript" async
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+
+  <body>
+    <div class="post">
+  <div class="container main">
+    <div class="row">
+      <header>
+        <center><span itemprop="name"><h1>Robot Control System Design for ARIAC</h1></span></center>
+        <center><p>7 Sep 2018</p></center>
+        <center><span class="small-ornament"><svg viewBox="0 0 290 320">
+          <path d="M280.2656 245.3906 Q280.2656 263.25 261.8438 271.9688 Q247.9219 278.7188 227.8125 278.7188 Q235.2656 269.8594 235.2656 256.5 Q235.2656 231.8906 214.4531 217.125 Q196.0312 204.0469 170.2969 204.0469 Q143.5781 204.0469 108.8438 221.0625 L118.9688 231.4688 Q154.4062 267.8906 168.3281 267.8906 Q181.125 267.8906 181.125 255.9375 Q181.125 248.3438 173.5312 243.5625 Q167.0625 239.3438 159.0469 239.3438 Q154.6875 239.3438 148.6406 241.4531 Q158.625 220.0781 173.9531 220.0781 Q184.5 220.0781 191.8828 228.0938 Q199.2656 236.1094 199.2656 246.6562 Q199.2656 265.5 184.3594 277.875 Q170.2969 289.4062 151.0312 289.4062 Q118.6875 289.4062 81.4219 251.0156 L72.1406 241.4531 Q53.5781 249.4688 39.375 249.4688 Q26.4375 249.4688 17.1562 240.9609 Q7.875 232.4531 7.875 219.5156 Q7.875 203.9062 19.125 193.9219 Q29.9531 184.5 45.8438 184.5 Q70.0312 184.5 98.2969 211.6406 Q111.5156 202.2188 127.5469 185.4844 L134.5781 178.1719 Q174.5156 136.6875 204.8906 136.6875 Q231.4688 136.6875 231.4688 155.25 Q231.4688 173.5312 204.3281 177.3281 Q206.4375 172.8281 206.4375 170.1562 Q206.4375 159.3281 193.3594 159.3281 Q175.2188 159.3281 144.2812 189 L137.1094 195.8906 Q165.2344 185.7656 191.25 185.7656 Q221.7656 185.7656 248.3438 200.1094 Q280.2656 217.2656 280.2656 245.3906 ZM61.1719 230.4844 Q44.5781 215.2969 37.2656 215.2969 Q27.9844 215.2969 27.9844 223.4531 Q27.9844 234.4219 42.75 234.4219 Q51.1875 234.4219 61.1719 230.4844z"/>
+        </svg></span></center>
+      </header>
+    </div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-8 offset-md-1">
+        <article lang="en">
+          
+          <blockquote>
+  <p>I recently participated in the <a href="https://www.nist.gov/el/intelligent-systems-division-73500/agile-robotics-industrial-automation-competition">Agile Robotics for Industrial Automation Competition</a> held by the <a href="https://www.nist.gov/">National Institute of Standards and Technology</a>. After spending the last several months developing a working control system for the provided environment, I will now discuss in more detail the design of the final system, as well as possible future improvements.</p>
+</blockquote>
+
+<p><br />	
+The software, which is available <a href="https://github.com/tdonca/ariac-2018-controls">here</a>, is written in C++, using the <a href="http://wiki.ros.org/Packages">ROS package format</a> and the <a href="https://cmake.org/">CMake</a> build system. ROS provides communication between modular processes called nodes. The packages each implement separate nodes for world representation, robot controllers, and collision object detection. The control system uses the <a href="https://moveit.ros.org/">MoveIt Motion Planning Framework</a> for calculating collision-free motion trajectories for the robot to execute within its environment.</p>
+
+<p><img src="/assets/ariac/ARIAC-Environment.png" alt="ariac-environment" class="img-responsive" height="300" width="520" style=" display: block; margin: auto; " /></p>
+
+<p>The ARIA Competition focused on order fulfillment in a factory setting - picking and placing parts into shipment containers for delivery. Given a <a href="http://gazebosim.org/">high-fidelity simulation</a> environment of the shipment area and an industrial robot, the <a href="https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/lbr-iiwa">KUKA IIWA14 Robot</a>, I was tasked with developing a system that could autonomously detect order parts in the environment, move the robot to correctly place them into a shipment box based on received order specifications, and submit the parts for processing. The simulation provides a <a href="https://github.com/IFL-CAMP/iiwa_stack">realistic interface</a> for the IIWA14 robot where I had access to joint motor commands. Using the MoveIt framework, I was able to create smooth motion executions to perform the order fulfillment task.
+<br />
+<br /></p>
+
+<h3 id="world-representation">World Representation</h3>
+
+<p>The two main entities to track in the environment are the parts and the robot. As the robot performs actions, grabbing and moving parts, filling shipment boxes, and fulfilling orders, the world representation must keep track of object relationships so that the robot has a valid perception of the environment. Camera sensors provide the perception input, and this allows the system to detect and track the various parts. Certain abstractions help keep track of the robot and part relationships. All parts belong in a “container,” whether they are the bins, the shipment box, or the robot’s gripper. As the robot grabs and moves parts around, it modifies the parts and their containers to maintain a valid representation of the environment.</p>
+
+<p><img src="/assets/ariac/WorldStateDiagram.png" alt="world-state" class="img-responsive" height="200" width="705" style=" display: block; margin: auto; " /></p>
+
+<p>The <a href="https://github.com/tdonca/ariac-2018-controls">world_state</a> package implements the world representation. This is an abstraction to help the robot reason about its environment, so the control system must update the world representation when any actions are taken that have an effect on the world. A client interface provides a simple and clean way to communicate this, abstracting the details of ROS communication and implementation, focusing just on higher level intentions.
+<br />
+<br /></p>
+
+<h3 id="robot-control-system">Robot Control System</h3>
+
+<p>The control system takes the available low-level interface of robot motor commands, and coordinates them into a higher level action controller. The main goal of fulfilling a shipment order can be broken down into individual tasks (move a part to the box). These tasks can be further broken down into actions (grab this part, move to the box, etc…). The control system takes these action commands and converts them into physical robot motions to achieve the desired outcome.</p>
+
+<p><img src="/assets/ariac/ControlSystemDiagram.png" alt="control-system" class="img-responsive" height="300" width="391" style=" display: block; margin: auto; " /></p>
+
+<p>The system was designed with modularity and extensibility in mind. The ActionManager class receives action commands, interprets them into more specific robot motions, and passes them to the ControllerServer for execution. The ControllerServer class then receives these requests and must determine which robot controller to send them to. The abstraction between The ControllerServer and the specific robot controller allows easy interchangeability for various types of robots. This way, the ActionManager does not need to worry about how the robot will actually execute its commands, or even what specific type of robot is in use.</p>
+
+<p>In this case, the simulation uses the <a href="https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/lbr-iiwa">KUKA IIWA14 Robot</a>, and the IIWA14Controller class implements the specific executions necessary to carry out the motion requests generated in the ActionManager. 
+<br />
+<br /></p>
+
+<h3 id="collision-avoidance">Collision Avoidance</h3>
+
+<p>The robot motions are implemented using the MoveIt motion planning framework. In order to calculate feasible motions in the environment, the system needs a representation of all possible collision objects.</p>
+
+<p><img src="/assets/ariac/ARIAC-Collision-Objects.png" alt="collision-objects" class="img-responsive" height="300" width="417" style=" display: block; margin: auto; " /></p>
+
+<p>MoveIt keeps track of collision objects in its <a href="http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/planning_scene_ros_api/planning_scene_ros_api_tutorial.html">planning scene</a>, and everything in the environment (bins, shelves, conveyor belt, etc…) is saved in the planning scene using the predefined object dimensions and <a href="http://wiki.ros.org/tf2">transforms</a>. The <a href="https://github.com/tdonca/ariac-2018-controls">load_scene</a> package computes the world transforms of all collision objects and sends them to the MoveIt planning scene. Then, the motion planning algorithms can detect environment objects and compute trajectories around them.
+<br />
+<br /></p>
+
+<h3 id="improvements">Improvements</h3>
+
+<p>For more complicated tasks - emergency orders, long term reasoning, and action verification - simple action planning is not enough. AI Planning languages such as <a href="https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume20/fox03a-html/node2.html">Planning Domain Definition Language</a> can be used to create better plans, given a thorough representation of the environment. Instead of a custom WorldState class, a formalized ontology of the working environment and the possible relationships, as discussed in <a href="https://www.nist.gov/publications/overview-ontology-based-approach-kit-building-applications">Kootbally et al. 2017</a>, along with a PDDL problem definition and planner can provide a robust method for planning complex goals, verifying task successes, and replanning in case of failures.</p>
+
+<p><br /></p>
+
+
+        </article>
+	     </div>
+     </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row biography">
+      <div class="col-sm-4">
+        <h2>who am i</h2>
+        <p>I am a Computer Science and Engineering student at <a href='https://samueli.ucla.edu/'>UCLA</a>, and a Robotics Research Assistant at <a href='http://vcla.stat.ucla.edu/'>VCLA</a>. Here you can find my <a href='/assets/resume.pdf'>Résumé</a>.</p>
+      </div>
+      <div class="col-sm-4">
+        <h2>what is this</h2>
+        <p>This is a collection of writeups detailing my studies in the fields of robotics, and AI.</p>
+      </div>
+      <div class="col-sm-4">
+        <h2>where am i</h2>
+          
+          
+          <div>
+            <a href="https://github.com/tdonca">
+              <span class="username">github//tdonca</span>
+            </a>
+          </div>
+          
+          
+          
+          <div>
+            <a href="https://id.linkedin.com/in/tgdonca">
+              <span class="username">linkedin//tgdonca</span>
+            </a>
+          </div>
+          
+          
+          <div>
+            <a href="https://www.facebook.com/tudor.donca.3">
+              <span class="username">facebook//tudor.donca.3</span>
+            </a>
+          </div>
+          
+      </div>
+    </div>
+    
+    <div class="row copyright">
+      <center>© 2018 by Tudor Donca.<br>Content available under <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>Creative Commons (BY-NC-SA)</a> unless otherwise noted.<br>This site is hosted at <a href='https://pages.github.com/'>Github Pages</a> and created with <a href='http://jekyllrb.com/'>Jekyll</a>.</center>
+    </div>
+    
+  </div>
+</footer>
+
+  </body>
+</html>
